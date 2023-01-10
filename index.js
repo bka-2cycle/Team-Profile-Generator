@@ -2,10 +2,14 @@ const fs = require('fs');
 const inquirer = require('inquirer');
 const { url } = require('inspector');
 
-const Employee = require('./employee');
+
+
 const Manager = require('./manager');
 const Engineer = require('./engineer');
 const Intern = require('./intern');
+
+const employeeArray = [];
+let htmlMarkup = "";
 
 
 // wrap all prompts for manager in a function
@@ -32,8 +36,12 @@ mgrQuestions = function() {
             name: 'mgrofficenum',
             message: 'Enter the team manager\'s office #:',
         }
-    ])};
-
+    ]).then ((response) => {
+        const manager = new Manager (response.mgrname, response.mgrid, response.mgremail, response.mgrofficenum);
+        employeeArray.push(manager);
+        optQuestion();
+    });
+}
 
 
         
@@ -42,7 +50,7 @@ engQuestions = function() {
     inquirer
         .prompt([
         {
-            type: 'confirm',
+            type: 'input',
             name: 'engname',
             message: 'Enter the name of the engineer:',
         },
@@ -61,7 +69,12 @@ engQuestions = function() {
             name: 'engghun',
             message: 'Enter the engineer\'s GitHub user name:',
         }
-    ])};
+    ]).then ((response) => {
+        const engineer = new Engineer (response.engname, response.engid, response.engmail, response.engghun);
+        employeeArray.push(engineer);
+        optQuestion();
+    }
+    )};
         
 
         
@@ -89,7 +102,12 @@ intQuestions = function() {
             name: 'intschool',
             message: 'Enter the name of the intern\s school:',
         }
-    ])};
+    ]).then ((response) => {
+        const intern = new Intern (response.intname, response.intid, response.intmail, response.intschool);
+        employeeArray.push(intern);
+            optQuestion();
+        }
+    )};
 
 
 optQuestion = function() {
@@ -101,15 +119,16 @@ optQuestion = function() {
             message: 'Please choose an option:',
             choices: ['Add an engineer', 'Add an intern', 'Finish building team'],
         }
-    ])}
-
-
-    .then((data) => {
-        const fileName = 'index.html'
+    ]).then ((response) => {
+        if (response.inputchoice == "Add an engineer") {
+        engQuestions()
     }
-
-
-
+    else if (response.inputchoice == "Add an intern") {
+        intQuestions()
+    }
+    else {
+        const fileName = 'index.html'
+        
     const html = `<!DOCTYPE html>
     <html lang="en">
     <head>
@@ -123,7 +142,7 @@ optQuestion = function() {
     
         <!-- Google Fonts -->
     
-        <link rel="stylesheet" href="./assets/style.css" />
+        <link rel="stylesheet" href="./style.css" />
     
         <title>Team Profile Generator</title>
     </head>
@@ -132,6 +151,7 @@ optQuestion = function() {
     <h1>My Team</h1>
     </header>
     <div id='all-cards'>
+    ${cardHtml(employeeArray)}
     </div>
       
     
@@ -149,100 +169,65 @@ optQuestion = function() {
     </body>
     </html>`
 
-    fs.writeFile(fileName, html, (err) =>
-      err ? console.log(err) : console.log('Success!')
-    );
+    
+        fs.writeFile(fileName, html, (err) =>
+        err ? console.log(err) : console.log('Success!')
+      );
+    }
+    });
+}
+
+
+    
+        
   
 
     
-function mgrCardHtml (data) {
-    let htmlMarkup = "";
-    for (let i = 0: i < data.length; i++) {
+function cardHtml (data) {
+    
+    for (let i = 0; i < data.length; i++) {
         //getRole returns the type of employee
         if (data[i].getRole() === "Manager") {
             htmlMarkup +=
 
 `<div class="card" style="width: 18rem;">
-  <div class="card-header">${data[i].getRole()}</div>
+  <div class="card-header">&#xF18F; ${data[i].getRole()}</div>
   <ul class="list-group list-group-flush">
     <li class="list-group-item">${data[i].getName()}</li>
-    <li class="list-group-item">${data[i].getId()}</li>
-    <li class="list-group-item">${data[i].getEmail()}</li>
+    <li class="list-group-item">ID: ${data[i].getId()}</li>
+    <li class="list-group-item">Email: ${data[i].getEmail()}</li>
+    <li class="list-group-item">Office #: ${data[i].getOfficeNumber()}</li>
 </div>`
+
         }
-    }
-};
-
-
-function engCardHtml (data) {
-    let htmlMarkup = "";
-    for (let i = 0: i < data.length; i++) {
-        //getRole returns the type of employee
         if (data[i].getRole() === "Engineer") {
             htmlMarkup +=
 
 `<div class="card" style="width: 18rem;">
-  <div class="card-header">${data[i].getRole()}</div>
+  <div class="card-header">&#xF4B2; ${data[i].getRole()}</div>
   <ul class="list-group list-group-flush">
     <li class="list-group-item">${data[i].getName()}</li>
-    <li class="list-group-item">${data[i].getId()}</li>
-    <li class="list-group-item">${data[i].getEmail()}</li>
-    <li class="list-group-item">${data[i].getGithub()}</li>
+    <li class="list-group-item">ID: ${data[i].getId()}</li>
+    <li class="list-group-item">Email: ${data[i].getEmail()}</li>
+    <li class="list-group-item">GitHub:${data[i].getGithub()}</li>
 </div>`
         }
-    }
-};
-
-function intCardHtml (data) {
-    let htmlMarkup = "";
-    for (let i = 0: i < data.length; i++) {
-        //getRole returns the type of employee
         if (data[i].getRole() === "Intern") {
             htmlMarkup +=
 
 `<div class="card" style="width: 18rem;">
-  <div class="card-header">${data[i].getRole()}</div>
+  <div class="card-header">&#xF6FE; ${data[i].getRole()}</div>
   <ul class="list-group list-group-flush">
     <li class="list-group-item">${data[i].getName()}</li>
-    <li class="list-group-item">${data[i].getId()}</li>
-    <li class="list-group-item">${data[i].getEmail()}</li>
-    <li class="list-group-item">${data[i].getSchool()}</li>
+    <li class="list-group-item">ID: ${data[i].getId()}</li>
+    <li class="list-group-item">Email: ${data[i].getEmail()}</li>
+    <li class="list-group-item">School: ${data[i].getSchool()}</li>
 </div>`
         }
     }
+    return htmlMarkup;
 };
-    
-
-
-//ask the mgr questions
-//ask the options question
-//continue supplying questions until finish is chosen in options
-
-//collect all user input for each set of questions as:
-//new manager object
-//new engineer object
-//new intern object
-
-//or collect all user input in one complete Array of objects
-
-//loop through the array with each employee function
-//which creates the literal html card code based on getRole value
-//insert that code into the html template all-cards div
-
-//create the html file with shell html and all cards generated inserted into the div
-
-
-
-
 
 
 mgrQuestions();
-optQuestion();
-if (choices == 'Add an engineer') {
-    engQuestions();
-} else if (choices == 'Add an intern') {
-    intQuestions();
-} else {
-    ???????();
-}
 
