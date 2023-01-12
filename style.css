@@ -3,6 +3,17 @@ h1 {
     font-family: 'Bakbak One', cursive;
 }
 
+header {
+    background: #A49282;
+    background: -moz-linear-gradient(top, #5a795b 0%, #FDFEFF 100%);
+    background: -webkit-linear-gradient(top, #5a795b 0%, #FDFEFF 100%);
+    background: linear-gradient(to bottom, #5a795b 0%, #FDFEFF 100%);
+    height: 160px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 
 #all-cards {
     display: flex;
@@ -21,14 +32,3 @@ h1 {
     font-size: larger;
     color: white;
 }
-
-header {
-    background: #A49282;
-background: -moz-linear-gradient(top, #5a795b 0%, #FDFEFF 100%);
-background: -webkit-linear-gradient(top, #5a795b 0%, #FDFEFF 100%);
-background: linear-gradient(to bottom, #5a795b 0%, #FDFEFF 100%);
-    height: 160px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    }
